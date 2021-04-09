@@ -1,17 +1,40 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import AppRouter from './routes/AppRouter';
+import { Provider } from 'react-redux';
+import { addBlog } from './actions/blog';
+import store from './Store/store';
+import moment from 'moment';
+import visibleBlog from './selectors/visibleBlog';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+store.dispatch(
+  addBlog({
+    title: 'First',
+    content: 'body1',
+    createdAt: moment('2000/10/12').format('YYYY MM DD'),
+  })
+);
+store.dispatch(
+  addBlog({
+    title: 'Second',
+    content: 'body2',
+    createdAt: moment('2001/10/12').format('YYYY MM DD'),
+  })
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const App = () => (
+  <Provider store={store}>
+    <AppRouter />
+  </Provider>
+);
+// console.log(store.getState());
+
+// const newStore = store.getState();
+// visibleBlog(newStore.blogs, newStore.filters);
+
+store.subscribe(() => {
+  const state = store.getState();
+  console.log(state);
+});
+
+ReactDOM.render(<App />, document.getElementById('root'));
